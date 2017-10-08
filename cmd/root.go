@@ -7,6 +7,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	swarm "github.com/eastside-eng/alienswarm/swarm"
 )
 
 var cfgFile string
@@ -21,6 +23,9 @@ var RootCmd = &cobra.Command{
 	Long: `...`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Swarm called")
+		sim := swarm.NewSim(cityFile, numAliens, numIterations)
+		sim.Run()
+		sim.Graph.PrintGraph()
 	},
 }
 
