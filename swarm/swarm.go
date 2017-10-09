@@ -221,21 +221,20 @@ func (sim *Sim) Step() {
   newAliens := make([]*Alien, 0)
 
   // For the occupancy map, if len(aliens) > 1, destroy everything.
-  for k,v := range occupancy {
+  for _,v := range occupancy {
     numAliens := len(v)
     if numAliens > 1 {
-      c, exists := sim.Graph.FindCity(k)
-      if exists {
-        names := make([]string, numAliens)
-        c.Destroyed = true
-        for i,a := range v {
-          names[i] = a.Name
-        }
-        // Builds up a string for each alien, handling the edge case at the end.
-        killList := strings.Join(names[:numAliens-1], ", ")
-        killList += " and " + v[numAliens-1].Name
-        fmt.Printf("%s was destroyed by aliens %s!\n", c.Name, killList)
+      names := make([]string, numAliens)
+      c := v[0].City
+      c.Destroyed = true
+      for i,a := range v {
+        names[i] = a.Name
       }
+      // Builds up a string for each alien, handling the edge case at the end.
+      killList := strings.Join(names[:numAliens-1], ", ")
+      killList += " and " + v[numAliens-1].Name
+      // fmt.Printf("%s was destroyed by aliens %s!\n", c.Name, killList)
+
     } else {
       newAliens = append(newAliens, v...)
     }
