@@ -36,7 +36,7 @@ You can use the generate command to generate random world inputs, see 'alienswar
 	Run: func(cmd *cobra.Command, args []string) {
 		sim := swarm.NewSim(args[0], numAliens, numIterations)
 		sim.Run()
-		sim.Graph.PrintGraph()
+		sim.World.PrintWorld()
 	},
 }
 
