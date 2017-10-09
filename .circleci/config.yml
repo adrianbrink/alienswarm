@@ -11,6 +11,7 @@ jobs:
 
     steps:
       - checkout
+      - run: sudo apt-get install software-properties-common
       - run: sudo add-apt-repository ppa:masterminds/glide -y
       - run: sudo apt-get update
       - run: sudo apt-get install glide -y
