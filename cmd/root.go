@@ -14,6 +14,7 @@ import (
 var cfgFile string
 var numAliens int
 var numIterations int
+
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "alienswarm <input-file>",

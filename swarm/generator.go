@@ -8,7 +8,7 @@ import (
 // Stolen from Moby/Docker source for generating docker names.
 var (
 	names = [...]string{
-    "albattani",
+		"albattani",
 		"allen",
 		"almeida",
 		"agnesi",
@@ -172,51 +172,56 @@ var (
 )
 
 func PrintWorld(n int, m int, world []string) {
-  for i := 0; i < n; i++ {
-    for j := 0; j < m; j++ {
-      idx := i * n + j
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			idx := i*n + j
 			if world[idx] != "" {
-	      out := world[idx]
-	      if j != 0 && world[idx-1] != "" {
-	        out += " west=" + world[idx-1] // west
-	      }
-	      if j != n - 1 && world[idx+1] != "" {
-	        out += " east=" + world[idx+1] // east
-	      }
-	      if i != 0 && world[idx-m] != "" {
-	        out += " north=" + world[idx-m] // north
-	      }
-	      if i != n - 1 && world[idx+m] != "" {
-	        out += " south=" + world[idx+m] // south
-	      }
-	      fmt.Println(out)
+				out := world[idx]
+				if j != 0 && world[idx-1] != "" {
+					out += " west=" + world[idx-1] // west
+				}
+				if j != n-1 && world[idx+1] != "" {
+					out += " east=" + world[idx+1] // east
+				}
+				if i != 0 && world[idx-m] != "" {
+					out += " north=" + world[idx-m] // north
+				}
+				if i != n-1 && world[idx+m] != "" {
+					out += " south=" + world[idx+m] // south
+				}
+				fmt.Println(out)
 			}
-    }
-  }
+		}
+	}
 }
 
-func Generate(n int, m int, densityLimit float32, densitySeed int) ([]string) {
-  r := rand.New(rand.NewSource(int64(densitySeed)))
-  world := make([]string, n*m)
-  // generate an NxM grid, randomly choose coordinates to turn into cities.
-  for i := range world {
-    roll := r.Float32()
-    if roll < densityLimit {
-      nameIdx := i % len(names)
-      count := (i / len(names))
+func Generate(n int, m int, densityLimit float32, densitySeed int) []string {
+	r := rand.New(rand.NewSource(int64(densitySeed)))
+	world := make([]string, n*m)
+	// generate an NxM grid, randomly choose coordinates to turn into cities.
+	for i := range world {
+		roll := r.Float32()
+		if roll < densityLimit {
+			nameIdx := i % len(names)
+			count := (i / len(names))
 			name := names[nameIdx]
 			switch count {
 			case 0: // do nothing
-			case 1: name = "new_" + name
-			case 2: name = "san_" + name
-			case 3: name = "uss_" + name
-			case 4: name = "moonbase_" + name
-			default: name = fmt.Sprintf("%s_%d", name, count)
+			case 1:
+				name = "new_" + name
+			case 2:
+				name = "san_" + name
+			case 3:
+				name = "uss_" + name
+			case 4:
+				name = "moonbase_" + name
+			default:
+				name = fmt.Sprintf("%s_%d", name, count)
 			}
-      world[i] = name
-    } else {
-      world[i] = ""
-    }
-  }
-  return world
+			world[i] = name
+		} else {
+			world[i] = ""
+		}
+	}
+	return world
 }
