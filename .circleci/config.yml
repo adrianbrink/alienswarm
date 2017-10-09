@@ -11,10 +11,7 @@ jobs:
 
     steps:
       - checkout
-      - run: sudo apt-get install software-properties-common
-      - run: sudo add-apt-repository ppa:masterminds/glide -y
-      - run: sudo apt-get update
-      - run: sudo apt-get install glide -y
+      - run: curl https://glide.sh/get | sh
       - run: glide install
       - run: make bench
       - run: make dist
