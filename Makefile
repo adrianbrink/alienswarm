@@ -10,5 +10,5 @@ build:
 	go build -o dist/alienswarm
 
 .PHONY: bench
-run:
+bench:
 	go test github.com/eastside-eng/alienswarm/swarm -bench=.

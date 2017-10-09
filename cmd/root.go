@@ -12,18 +12,29 @@ import (
 )
 
 var cfgFile string
-var cityFile string
 var numAliens int
 var numIterations int
-
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "alienswarm",
-	Short: "A brief description of your application",
-	Long: `...`,
+	Use:   "alienswarm <input-file>",
+	Short: "A discrete-event simulation for Alien Invasion.",
+	Long: `Alienswarm is a Go binary that runs a discrete-event simulation.
+
+The simulation spawns a number of aliens into the world. Each iteration, the aliens move to a neighboring
+city. If two or more aliens end up in the same city, they kill each other and destroy the city. The simulation will
+end when all aliens are dead or the max number of iterations is exceeded. When finished, it will print the state of the
+world to STDOUT.
+
+To use alienswarm, pass an input file of the format:
+
+	Foo north=Bar west=Baz south=Qu-ux
+	Bar south=Foo west=Bee
+
+You can use the generate command to generate random world inputs, see 'alienswarm generate -h'.
+`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Swarm called")
-		sim := swarm.NewSim(cityFile, numAliens, numIterations)
+		sim := swarm.NewSim(args[0], numAliens, numIterations)
 		sim.Run()
 		sim.Graph.PrintGraph()
 	},
@@ -38,18 +49,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.alienswarm.yaml)")
-
-	// Pull inputs from flags or env/config via Viper.
-	RootCmd.Flags().StringVarP(&cityFile, "inputFile", "f", "", "The input file describe cities and their roads.")
-	viper.BindPFlag("inputFile", RootCmd.PersistentFlags().Lookup("inputFile"))
-
 	RootCmd.Flags().IntVarP(&numAliens, "numAliens", "a", 10, "The number of aliens to spawn randomly.")
-	viper.BindPFlag("numAliens", RootCmd.PersistentFlags().Lookup("numAliens"))
-
 	RootCmd.Flags().IntVarP(&numIterations, "numIterations", "n", 10000, "The number of iterations to run.")
-	viper.BindPFlag("numIterations", RootCmd.PersistentFlags().Lookup("numIterations"))
 }
 
 // initConfig reads in config file and ENV variables if set.
