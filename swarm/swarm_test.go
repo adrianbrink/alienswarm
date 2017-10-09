@@ -1,43 +1,35 @@
 package swarm
 
-import "testing"
+import (
+  "testing"
+  "os"
+)
+
+func benchmark(numAliens int, numIterations int, b *testing.B) {
+  os.Stdout, _ = os.Open(os.DevNull)
+  sim := NewSim("../sample/input.50x50", numAliens, numIterations)
+  b.ResetTimer()
+  for n := 0; n < b.N; n++ {
+    sim.Run()
+  }
+}
 
 func BenchmarkSwarm1000(b *testing.B) {
-	sim := NewSim("../sample/input.50x50", 1000, 100000)
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		sim.Run()
-	}
+  benchmark(1000, 100000, b)
 }
 
 func BenchmarkSwarm100(b *testing.B) {
-	sim := NewSim("../sample/input.50x50", 100, 100000)
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		sim.Run()
-	}
+  benchmark(100, 100000, b)
 }
 
 func BenchmarkSwarm10(b *testing.B) {
-	sim := NewSim("../sample/input.50x50", 10, 100000)
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		sim.Run()
-	}
+  benchmark(10, 100000, b)
 }
 
 func BenchmarkSwarm2(b *testing.B) {
-	sim := NewSim("../sample/input.50x50", 2, 100000)
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		sim.Run()
-	}
+  benchmark(2, 100000, b)
 }
 
 func BenchmarkSwarm1(b *testing.B) {
-	sim := NewSim("../sample/input.50x50", 1, 100000)
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		sim.Run()
-	}
+  benchmark(1, 100000, b)
 }

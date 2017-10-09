@@ -6,6 +6,7 @@ dist:
 
 .PHONY: build
 build:
+	go fmt github.com/eastside-eng/alienswarm/swarm github.com/eastside-eng/alienswarm/cmd
 	mkdir -p dist
 	go build -o dist/alienswarm
 

@@ -11,8 +11,10 @@ jobs:
 
     steps:
       - checkout
-      - run: ls
-      - run: pwd
+      - run: sudo add-apt-repository ppa:masterminds/glide -y
+      - run: sudo apt-get update
+      - run: sudo apt-get install glide -y
+      - run: glide install
       - run: make bench
       - run: make dist
       - run: go get github.com/tcnksm/ghr
