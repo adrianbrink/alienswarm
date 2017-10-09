@@ -196,11 +196,11 @@ func PrintWorld(n int, m int, world []string) {
 }
 
 func Generate(n int, m int, densityLimit float32, densitySeed int) ([]string) {
-  rand := rand.New(rand.NewSource(int64(densitySeed)))
+  r := rand.New(rand.NewSource(int64(densitySeed)))
   world := make([]string, n*m)
   // generate an NxM grid, randomly choose coordinates to turn into cities.
   for i := range world {
-    roll := rand.Float32()
+    roll := r.Float32()
     if roll < densityLimit {
       nameIdx := i % len(names)
       count := (i / len(names))
