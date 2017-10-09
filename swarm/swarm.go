@@ -127,6 +127,10 @@ func (g *Graph) AddCity(city *City) {
   g.cities[city.Name] = city
 }
 
+func (g *Graph) DeleteCity(key string) {
+  delete(g.cities, key)
+}
+
 func (g *Graph) HasCity(name string) bool {
   _, ok := g.cities[name]
   return ok
@@ -174,11 +178,10 @@ func BuildGraph(fileName string) *Graph {
 type Alien struct {
   Name string
   City *City
-  Dead bool
 }
 
 func NewAlien(name string, city *City) *Alien {
-  alien := &Alien{Name: name, City: city, Dead: false}
+  alien := &Alien{Name: name, City: city}
   return alien
 }
 
@@ -201,23 +204,21 @@ type Sim struct {
 func (sim *Sim) Step() {
   // Move all aliens
   for _,a := range sim.Aliens {
-    if !a.Dead {
-      a.RandomWalk()
-    }
+    a.RandomWalk()
   }
 
   // Build up a map of cities -> aliens
   occupancy := make(map[string][]*Alien)
   for _,a := range sim.Aliens {
-    if !a.Dead {
-      name := a.City.Name
-      aliens, found := occupancy[name]
-      if !found {
-        aliens = make([]*Alien, 0)
-      }
-      occupancy[name] = append(aliens, a)
+    name := a.City.Name
+    aliens, found := occupancy[name]
+    if !found {
+      aliens = make([]*Alien, 0)
     }
+    occupancy[name] = append(aliens, a)
   }
+
+  newAliens := make([]*Alien, 0)
 
   // For the occupancy map, if len(aliens) > 1, destroy everything.
   for k,v := range occupancy {
@@ -228,7 +229,6 @@ func (sim *Sim) Step() {
         names := make([]string, numAliens)
         c.Destroyed = true
         for i,a := range v {
-          a.Dead = true
           names[i] = a.Name
         }
         // Builds up a string for each alien, handling the edge case at the end.
@@ -236,25 +236,16 @@ func (sim *Sim) Step() {
         killList += " and " + v[numAliens-1].Name
         fmt.Printf("%s was destroyed by aliens %s!\n", c.Name, killList)
       }
+    } else {
+      newAliens = append(newAliens, v...)
     }
   }
+
+  sim.Aliens = newAliens
 }
 
 func (sim *Sim) Run() {
-  for sim.CurrentIteration <= sim.MaxIterations {
-    done := true
-    for _,a := range sim.Aliens {
-      if !a.Dead {
-        done = false
-        break
-      }
-    }
-
-    // If all aliens are dead, let's just break the event loop.
-    if done {
-      break
-    }
-
+  for sim.CurrentIteration <= sim.MaxIterations && len(sim.Aliens) != 0 {
     sim.Step()
     sim.CurrentIteration++
   }
