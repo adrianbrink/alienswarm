@@ -1,5 +1,7 @@
 package swarm
 
+import "sync"
+
 // Using a City struct to model the city graph. Each city will
 // have bi-directional edges in the cardinal directions. An additional
 // boolean `Destroyed` represents the state of the city during simulation.
@@ -9,6 +11,15 @@ type City struct {
 	East  *City
 	South *City
 	West  *City
+
+	// In the concurrent version, each alien will add/remove themselves from the
+	// visitor set during their step routine. We use a simple mutex to sync. Since
+	// the read will happen in the update step, we're guaranteed reads will happen
+	// after all writes.
+	visitorLock sync.Mutex
+	visitors    []*Alien
+
+	NumVisitors int
 }
 
 func (src *City) String() string {
@@ -97,6 +108,31 @@ func (src *City) GetNeighbors() []*City {
 		neighbors = append(neighbors, src.West)
 	}
 	return neighbors
+}
+
+func (src *City) AddVisitor(alien *Alien) {
+	src.visitorLock.Lock()
+	src.visitors = append(src.visitors, alien)
+	src.NumVisitors = len(src.visitors)
+	src.visitorLock.Unlock()
+}
+
+func (src *City) RemoveVisitor(alien *Alien) {
+	src.visitorLock.Lock()
+	for i, a := range src.visitors {
+		if a == alien {
+			src.visitors = append(src.visitors[:i], src.visitors[i+1:]...)
+			break
+		}
+	}
+	src.NumVisitors = len(src.visitors)
+	src.visitorLock.Unlock()
+}
+
+// GetVisitors does not lock because this should only be invoked on the Update step of the Sim.
+// All visitor mutations happen in the Step step.
+func (src *City) GetVisitors() []*Alien {
+	return src.visitors
 }
 
 func NewCity(name string) *City {
