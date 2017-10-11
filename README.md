@@ -101,7 +101,7 @@ The input maps directly to a cartesian plane / grid, but we can solve this more 
 
 My first thought is to process the file into a in-memory graph, with each node representing a city, it's status (destroyed/healthy) and a list of roads. Then, we would generate N aliens and enter an event-loop. Each iteration in the loop would iterate through all the aliens and take a random step, checking for collisions and updating the city/alien state.
 
-This performs okay, benchmarks:
+This performs well, benchmarks:
 
 ```
 21:43 $ make bench
@@ -123,4 +123,25 @@ Improvements I want to make:
 * Make it deterministic. This involves having each alien use a different RNG that is seeded with a configurable seed.
 * Refactor the Sim type into a generic harness. I'd like to put all the state into a bag and avoid having it mutated in random
 places of the step function. Ideally the Step function would produce a new State in pure fashion. Short of something like persistent vectors, we can't get away from mutating the Sim state directly without losing performance or copying all the data each time we step.
-* Refactor the execution model to use message passing for edge-triggered state changes. Right now, a performance bottleneck is looping through all the cities in the Step function. We can avoid this by having Aliens emit events when they move to a city with another alien on it.
+* Refactor the execution model to use message passing for edge-triggered state changes. Right now, a performance bottleneck is looping through all the aliens in the Step function. We can avoid this by having Aliens emit events when they move to a city with another alien on it.
+
+Adding channels and waitGroups slowed things down and complicated the code:
+
+```
+18:01 $ make bench
+go test github.com/eastside-eng/alienswarm/swarm -bench=.
+goos: darwin
+goarch: amd64
+pkg: github.com/eastside-eng/alienswarm/swarm
+BenchmarkSwarm100x100x1000-8   	       1	4270835889 ns/op
+BenchmarkSwarm100x100x500-8    	       1	2567734537 ns/op
+BenchmarkSwarm100x100x100-8    	       1	1103463139 ns/op
+BenchmarkSwarm50x50x1000-8     	 2000000	       622 ns/op
+BenchmarkSwarm50x50x100-8      	 2000000	       602 ns/op
+BenchmarkSwarm50x50x10-8       	 2000000	       583 ns/op
+BenchmarkSwarm50x50x2-8        	 2000000	       857 ns/op
+BenchmarkSwarm50x50x1-8        	 2000000	       705 ns/op
+ok  	github.com/eastside-eng/alienswarm/swarm	20.906s
+```
+
+I'm certain we can parallelize this if we push the collision checking into the alien goroutine but I'm not going to pursue this further.
