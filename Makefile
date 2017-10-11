@@ -2,7 +2,7 @@
 dist:
 	go get github.com/mitchellh/gox
 	mkdir -p dist
-	gox -os="linux osx" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}"
+	gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
 .PHONY: build
 build:
