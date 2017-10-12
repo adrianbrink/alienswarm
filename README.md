@@ -109,13 +109,15 @@ go test github.com/eastside-eng/alienswarm/swarm -bench=.
 goos: darwin
 goarch: amd64
 pkg: github.com/eastside-eng/alienswarm/swarm
-BenchmarkSwarm1000-8   	500000000	         3.12 ns/op
-BenchmarkSwarm100-8    	500000000	         3.07 ns/op
-BenchmarkSwarm10-8     	500000000	         2.66 ns/op
-BenchmarkSwarm2-8      	500000000	         2.87 ns/op
-BenchmarkSwarm1-8      	500000000	         2.72 ns/op
-PASS
-ok  	github.com/eastside-eng/alienswarm/swarm	12.983s
+BenchmarkSwarm100x100x1000-8   	   10000	    153176 ns/op
+BenchmarkSwarm100x100x500-8    	   10000	    114270 ns/op
+BenchmarkSwarm100x100x100-8    	   50000	     34894 ns/op
+BenchmarkSwarm50x50x1000-8     	 2000000	      1083 ns/op
+BenchmarkSwarm50x50x100-8      	20000000	        76.2 ns/op
+BenchmarkSwarm50x50x10-8       	20000000	        75.7 ns/op
+BenchmarkSwarm50x50x2-8        	20000000	       744 ns/op
+BenchmarkSwarm50x50x1-8        	 3000000	       415 ns/op
+ok  	github.com/eastside-eng/alienswarm/swarm	28.510s
 ```
 
 Improvements I want to make:
@@ -145,3 +147,5 @@ ok  	github.com/eastside-eng/alienswarm/swarm	20.906s
 ```
 
 I'm certain we can parallelize this if we push the collision checking into the alien goroutine but I'm not going to pursue this further.
+
+I've found that in most cases the graph converges into disjointed islands pretty quickly. Detecting if another alien is in the island will allow the sim to short circuit and I think maintaining a quad tree of all aliens would provide an efficient way to do this.

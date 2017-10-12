@@ -19,8 +19,6 @@ func (a *Alien) RandomWalk() {
 	neighbors := a.City.GetNeighbors()
 	if len(neighbors) > 0 {
 		choice := rand.Intn(len(neighbors))
-		a.City.RemoveVisitor(a)
 		a.City = neighbors[choice]
-		a.City.AddVisitor(a)
 	}
 }
