@@ -145,3 +145,5 @@ ok  	github.com/eastside-eng/alienswarm/swarm	20.906s
 ```
 
 I'm certain we can parallelize this if we push the collision checking into the alien goroutine but I'm not going to pursue this further.
+
+I've found that in most cases the graph converges into disjointed islands. Detecting if another alien is in the island will allow the sim to short circuit and I think maintaining a quad tree of all aliens would provide an efficient way to do this.
