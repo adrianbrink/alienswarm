@@ -72,7 +72,7 @@ Capture the output and plugin it back into alienswarm.
 
 Being new to the Golang ecosystem, I was curious how to build artifacts for other architectures and found the excellent gox utility.
 
-I'm working on getting CircleCI automated to build new cross-arch releases on git push.
+Using CircleCI and gox, pushes to master will have releases automatically created under https://github.com/eastside-eng/alienswarm/releases. This is not well tuned and could use some clean up, e.g. avoiding building on README updates!
 
 ## Thought Log
 
